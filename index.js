@@ -1,7 +1,7 @@
 const http = require("http");
 
 const server = http.createServer((req, res) => {
-  res.write("Hello Jenkins");
+  res.write("I want to learne CICD");
   res.end();
 });
 
