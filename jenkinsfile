@@ -9,7 +9,7 @@ pipeline {
                     cd /home/ubuntu/app &&
                     git pull origin main &&
                     npm install &&
-                    pm2 restart nodeapp || pm2 start app.js --name nodeapp
+                    pm2 restart nodeapp || pm2 start index.js --name nodeapp
                 "
                 '''
             }
