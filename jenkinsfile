@@ -1,12 +1,18 @@
-stage('Deploy to Node VM') {
-    steps {
-        sh '''
-        ssh -o StrictHostKeyChecking=no ubuntu@<172.31.26.252> "
-            cd /home/ubuntu/app &&
-            git pull origin main &&
-            npm install &&
-            pm2 restart nodeapp || pm2 start app.js --name nodeapp
-        "
-        '''
+pipeline {
+    agent any
+
+    stages {
+        stage('Deploy to Node VM') {
+            steps {
+                sh '''
+                ssh -o StrictHostKeyChecking=no ubuntu@172.31.15.245 "
+                    cd /home/ubuntu/app &&
+                    git pull origin main &&
+                    npm install &&
+                    pm2 restart nodeapp || pm2 start app.js --name nodeapp
+                "
+                '''
+            }
+        }
     }
 }
