@@ -6,7 +6,7 @@ pipeline {
             steps {
                 sh '''
                 ssh -o StrictHostKeyChecking=no ubuntu@44.223.92.147 "
-                    cd /home/ubuntu/app &&
+                    cd /home/ubuntu/simple-nodejs-app &&
                     git pull origin main &&
                     npm install &&
                     pm2 restart nodeapp || pm2 start index.js --name nodeapp
