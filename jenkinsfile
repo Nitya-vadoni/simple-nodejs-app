@@ -5,7 +5,7 @@ pipeline {
         stage('Deploy to Node VM') {
             steps {
                 sh '''
-                ssh -o StrictHostKeyChecking=no ubuntu@172.31.26.252 "
+                ssh -o StrictHostKeyChecking=no ubuntu@44.223.92.147 "
                     cd /home/ubuntu/app &&
                     git pull origin main &&
                     npm install &&
