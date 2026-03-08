@@ -10,8 +10,8 @@ pipeline {
         stage('Deploy Node App') {
             steps {
                 sh '''
-                ssh -o StrictHostKeyChecking=no ubuntu@$13.58.255.150 "
-                
+                ssh -o StrictHostKeyChecking=no ubuntu@$SERVER_IP "
+
                 if [ ! -d simple-nodejs-app ]; then
                     git clone https://github.com/Nitya-vadoni/simple-nodejs-app.git
                 fi
