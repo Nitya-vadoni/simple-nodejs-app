@@ -1,18 +1,52 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "nityavadoni/nodejs-cicd-app"
+    }
+
     stages {
-        stage('Deploy to Node VM') {
+
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/Nitya-vadoni/simple-nodejs-app.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME:latest .'
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+
+                    sh '''
+                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    docker push $IMAGE_NAME:latest
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to Node Server') {
             steps {
                 sh '''
                 ssh -o StrictHostKeyChecking=no ubuntu@98.93.1.161 "
-                    cd /home/ubuntu/simple-nodejs-app &&
-                    git pull origin main &&
-                    npm install &&
-                    pm2 restart nodeapp || pm2 start index.js --name nodeapp
+                docker pull $IMAGE_NAME:latest &&
+                docker stop nodeapp || true &&
+                docker rm nodeapp || true &&
+                docker run -d -p 3000:3000 --name nodeapp $IMAGE_NAME:latest
                 "
                 '''
             }
         }
+
     }
 }
