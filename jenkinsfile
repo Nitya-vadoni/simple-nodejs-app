@@ -43,8 +43,8 @@ pipeline {
 
                 docker pull $IMAGE_NAME:latest
 
-                docker stop nodeapp || true
-                docker rm nodeapp || true
+                docker stop Nodejs || true
+                docker rm Nodejs || true
 
                 docker run -d -p 3000:3000 --name nodeapp $IMAGE_NAME:latest
                 "
