@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "nityavadoni/nodejs-jenkins:"
+        IMAGE_NAME = "nityavadoni/nodejs-jenkins"
         SERVER_IP = "44.220.45.213"
     }
 
