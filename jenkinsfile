@@ -2,30 +2,51 @@ pipeline {
     agent any
 
     environment {
-        SERVER_IP = "13.58.255.150"
+        IMAGE_NAME = "nityavadoni/nodejs-jenkins:"
+        SERVER_IP = "44.220.45.213"
     }
 
     stages {
 
-        stage('Deploy Node App') {
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/Nitya-vadoni/simple-nodejs-app.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME:latest .'
+            }
+        }
+
+        stage('Push Image to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub_creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+
+                    sh '''
+                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    docker push $IMAGE_NAME:latest
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to Server') {
             steps {
                 sh '''
                 ssh -o StrictHostKeyChecking=no ubuntu@$SERVER_IP "
 
-                if [ ! -d simple-nodejs-app ]; then
-                    git clone https://github.com/Nitya-vadoni/simple-nodejs-app.git
-                fi
-
-                cd simple-nodejs-app
-
-                git pull origin main
-
-                docker build -t nodeapp .
+                docker pull $IMAGE_NAME:latest
 
                 docker stop nodeapp || true
                 docker rm nodeapp || true
 
-                docker run -d -p 3000:3000 --name nodeapp nodeapp
+                docker run -d -p 3000:3000 --name nodeapp $IMAGE_NAME:latest
                 "
                 '''
             }
